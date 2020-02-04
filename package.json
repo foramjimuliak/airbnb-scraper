@@ -1,0 +1,11 @@
+{
+  "name": "airbnb-scraper",
+  "version": "1.0.0",
+  "description": "Scraper for airbnb listings",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Foram Jimulia",
+  "license": "ISC"
+}
