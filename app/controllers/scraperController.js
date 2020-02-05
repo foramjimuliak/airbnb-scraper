@@ -42,16 +42,25 @@ const scrapeAirbnbListing = (req, res) => {
         }).find('span[aria-hidden!="true"]')
         .not(':has(span)');
 
+        //scrape amenities
+        const amenities = [];
+        const amenity = $('#amenities');
+        const amenityData = amenity.find('td').find('div');
+
+        $(amenityData).each(function(i, elem) {
+            amenities[i] = $(elem).text();
+        });
+
         // create property object which returns all details
         const propertyDetails = {
-            name: name.text(),
+            name: name.eq(0).text(),
             capacity: getNumber(details.eq(0).text()),
             bedrooms: getNumber(details.eq(1).text()),
             beds: getNumber(details.eq(2).text()),
             baths: getNumber(details.eq(3).text()),
+            amenities: amenities.filter(function (el) {return el != ''})
         }
         res.status(200).send(propertyDetails);
-
 
     })
     .catch(err => {
