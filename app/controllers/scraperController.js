@@ -1,6 +1,10 @@
 import * as requestPromise from 'request-promise';
 import cheerio from 'cheerio';
 
+function getNumber(value) {
+    return Number(value.substr(0, value.indexOf(" ")))
+}
+
 /**
  * Author - Foram jimulia.
  * Accepts Listing Id from URL parameter.
@@ -25,11 +29,30 @@ const scrapeAirbnbListing = (req, res) => {
     }
 
     requestPromise.get(options).then(function($) {
-        
+
         //scrape property name
         const summary = $('#summary');
         const name = summary.find("div[itemprop='name']");
-        console.log(name.text());
+
+        //scrape details like total capacity, beds, baths
+        const mainContent = summary.next();
+        const details = mainContent.find('div')
+        .filter(function(i,el) {
+            return this.children.length == 7
+        }).find('span[aria-hidden!="true"]')
+        .not(':has(span)');
+
+        // create property object which returns all details
+        const propertyDetails = {
+            name: name.text(),
+            capacity: getNumber(details.eq(0).text()),
+            bedrooms: getNumber(details.eq(1).text()),
+            beds: getNumber(details.eq(2).text()),
+            baths: getNumber(details.eq(3).text()),
+        }
+        res.status(200).send(propertyDetails);
+
+
     })
     .catch(err => {
         console.log(err);
